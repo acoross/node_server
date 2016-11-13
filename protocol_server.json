@@ -1,0 +1,14 @@
+{
+    "login_response":{
+        "account_id": 1, 
+        "nickname": "no",
+        "chat_server_ok": true,
+        "chat_server_ip": "127.0.0.1",
+        "character_list": [
+            {
+                "dbid": 0,
+                "exp": 0
+            }
+        ]
+    }
+}
