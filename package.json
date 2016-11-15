@@ -1,0 +1,11 @@
+{
+    "dependencies": {
+        "express": "4.14.0",
+        "body-parser": "1.15.2",
+        "jshint": "2.9.4",
+        "mysql": "2.12.0",
+        "promise-redis": "0.0.5",
+        "asyncawait": "1.0.6",
+        "jslint": "0.10.3"
+    }
+}
