@@ -1,12 +1,12 @@
 const assert = require('assert');
-
+var async = require('asyncawait/async');
+var await = require('asyncawait/await');
 var express = require('express');
 var bodyParser = require('body-parser');
+
 var login = require('./login');
 var protocol_client = require('./protocol_client');
 var protocol_server = require('./protocol_server');
-
-var mysql_test = require('./mysql_test');
 
 function validate_schema(protocol, obj) {
     return Object.keys(protocol).every((prop) => {
@@ -17,7 +17,7 @@ function validate_schema(protocol, obj) {
 var app = express();
 app.use(bodyParser.json());
 
-app.post('/login.php', (req, res) => {
+app.post('/login.php', async(function(req, res) {
     if (!validate_schema(protocol_client.login_request, req.body)) {
         return res.json({
             "name": "error",
@@ -25,40 +25,19 @@ app.post('/login.php', (req, res) => {
         });
     }
 
-    login.process_login(Number(req.body.account_id), req.body.password)
-        .then(
-            (login_response) => {
-                assert(validate_schema(protocol_server.login_response, login_response),
-                    "response protocol is weired");
-                res.json(login_response);
-            },
-            (err) => {
-                if (err.name == "login_failure")
-                    res.json(err);
-                else
-                    throw err;
-            });
-});
+    try {
+        var login_response = await (login.process_login(Number(req.body.account_id), req.body.password));
 
-app.post('/hello', (req, res) => {
-    res.json({
-        name: "json",
-        message: "hello, express"
-    });
-});
-
-app.post('/db', (req, res) => {
-    mysql_test.test(function(err) {
-        if (err) {
-            return res.json({ name: "fail", message: err.message });
-        }
-
-        return res.json({
-            name: "json",
-            message: "done"
-        });
-    });
-});
+        assert(validate_schema(protocol_server.login_response, login_response),
+            "response protocol is weired");
+        res.json(login_response);
+    } catch (err) {
+        if (err.name == "login_failure")
+            res.json(err);
+        else
+            throw err;
+    }
+}));
 
 app.post('/promise', (req, res) => {
     // var p = new Promise((resolve, reject)=>{
